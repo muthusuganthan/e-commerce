@@ -1,7 +1,7 @@
 import { ShimmerSimpleGallery } from "react-shimmer-effects";
 import { useEffect, useState } from "react";
 import { Link, useRouteError } from "react-router-dom";
-import Useproductdata from "../hooks/Useproductdata";
+import Useproductdata from "../hooks/useproductdata";
 
 export const Card = (props) => {
   const {
