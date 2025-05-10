@@ -1,4 +1,4 @@
-import React, { lazy, Suspense } from 'react';
+import React, { lazy, Suspense } from "react";
 import ReactDOM from "react-dom/client";
 import "./style.css";
 import "flowbite";
@@ -17,7 +17,9 @@ import {
 import Error from "./components/error";
 import Productsdeatails from "./components/productdeatails";
 import Imagecompoent from "./components/imagecomponent";
-
+import Form from "./components/form";
+import ComponentA from "./components/propsdrilling/componentA";
+import Usedatacontext from "./store/usedatacontext";
 const Comment = lazy(() => import("./components/comment"));
 
 // componet ccomposition
@@ -26,7 +28,7 @@ const Body = () => {
   return (
     <>
       {/* <Card /> */}
-      
+
       {/* <Counter /> */}
       {/* <Header /> */}
       <Heroscection />
@@ -37,9 +39,7 @@ const Body = () => {
   );
 };
 
-
 // basic route creation
-
 
 // const router = createBrowserRouter([
 //   {
@@ -64,64 +64,70 @@ const Body = () => {
 // with out router to run directory
 // root.render(Body());
 
-
-
-
-
-
-   const Applayout = () => {
-    return (
-      <>
+const Applayout = () => {
+  return (
+    <>
+      <Usedatacontext.Provider value={{ name: "sam" }}>
         <Header />
-        <Outlet />
-        <Footer />
-      </>
-    );
-  };
-  
-  const router = createBrowserRouter([
-    {
-      path: "/",
-      element: <Applayout />,
-      children: [
-        {
-          path: "/",
-          element: <Body />,
-        },
-        {
-          path: "/counter",
-          element: <Counter />,
-        },
-        
-        {
-          path: "/productlayout",
-          element: <Productlayout/>,
-        },
-        
-        {
-          path: "/productlayout/:product_id",
-          element: <Productsdeatails/>,
-        },
+      </Usedatacontext.Provider>
 
-        {
-          path: "/imagecomponents",
-          element: <Imagecompoent/>,
-        },
+      <Outlet />
+      <Footer />
+    </>
+  );
+};
 
-        {
-          path: "/comment",
-          element: (
-            <Suspense fallback={"Loading..."}>
-              <Comment />
-            </Suspense>
-          ),}
+const router = createBrowserRouter([
+  {
+    path: "/",
+    element: <Applayout />,
+    children: [
+      {
+        path: "/",
+        element: <Body />,
+      },
+      {
+        path: "/counter",
+        element: <Counter />,
+      },
 
-      ],
-      errorElement:<Error />
-    },
-  ]);
+      {
+        path: "/productlayout",
+        element: <Productlayout />,
+      },
 
+      {
+        path: "/productlayout/:product_id",
+        element: <Productsdeatails />,
+      },
 
-  const root = ReactDOM.createRoot(document.getElementById("root"));
+      {
+        path: "/imagecomponents",
+        element: <Imagecompoent />,
+      },
+
+      {
+        path: "/form",
+        element: <Form />,
+      },
+
+      {
+        path: "/propsdrilling",
+        element: <ComponentA />,
+      },
+
+      {
+        path: "/comment",
+        element: (
+          <Suspense fallback={"Loading..."}>
+            <Comment />
+          </Suspense>
+        ),
+      },
+    ],
+    errorElement: <Error />,
+  },
+]);
+
+const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(<RouterProvider router={router} />);
-  

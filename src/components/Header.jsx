@@ -1,9 +1,13 @@
 import { Link } from "react-router-dom";
-import logo from "../assets/logo.png"
+import logo from "../assets/logo.png";
 import Useonlinestatus from "../hooks/useonlinestatus";
+import Usedatacontext from "../store/usedatacontext";
+import { useContext } from "react";
 
 const Header = () => {
-  const status = Useonlinestatus()
+  const status = Useonlinestatus();
+  const data = useContext (Usedatacontext);
+  console.log(data);
   return (
     <nav className="bg-white dark:bg-gray-800 antialiased">
       <div className="max-w-screen-xl px-4 mx-auto 2xl:px-0 py-4">
@@ -42,9 +46,8 @@ const Header = () => {
                   products
                 </Link>
               </li>
-              <li className="shrink-0">
-                {status ? "✅" : "❌"}
-              </li>
+              <li className="shrink-0">{status ? "✅" : "❌"}</li>
+              <li className="shrink-0">{data.name}</li>
             </ul>
           </div>
           <div className="flex items-center lg:space-x-2">
@@ -538,4 +541,4 @@ const Header = () => {
     </nav>
   );
 };
-export default Header
+export default Header;
