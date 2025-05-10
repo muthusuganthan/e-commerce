@@ -1,7 +1,7 @@
 import React from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod/dist/index.js";
+import { z } from "zod";
 
 const schema = z.object({
   name: z.string().min(1, { message: "Required" }),
@@ -15,12 +15,20 @@ const Form = () => {
     register,
     handleSubmit,
     reset,
-    formState: { errors },
-  } = useForm({ resolver: zodResolver(schema) });
+    formState: { errors, isSubmitting },
+  } = useForm({
+    resolver: zodResolver(schema),
+    mode: "onChange"
+  });
 
-  const Submitfunction = (data) => {
-    console.log(data);
-    // reset(); // Uncomment if you want the form to clear after submission
+  const onSubmit = async (data) => {
+    try {
+      console.log(data);
+      // Add your form submission logic here
+      reset();
+    } catch (error) {
+      console.error("Form submission error:", error);
+    }
   };
 
   return (
@@ -32,7 +40,7 @@ const Form = () => {
             <p className="text-blue-100 mt-1">We're here to help</p>
           </div>
 
-          <form className="p-6 space-y-5" onSubmit={handleSubmit(Submitfunction)}>
+          <form className="p-6 space-y-5" onSubmit={handleSubmit(onSubmit)}>
             {/* Name Field */}
             <div className="space-y-2">
               <label htmlFor="name" className="block text-sm font-medium text-gray-700 flex items-center">
@@ -112,9 +120,10 @@ const Form = () => {
             {/* Submit Button */}
             <button
               type="submit"
-              className="w-full bg-gradient-to-r from-blue-500 to-blue-600 text-white py-3 px-4 rounded-lg font-medium hover:from-blue-600 hover:to-blue-700 transform hover:scale-[1.02] transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 shadow-md hover:shadow-lg"
+              disabled={isSubmitting}
+              className="w-full bg-gradient-to-r from-blue-500 to-blue-600 text-white py-3 px-4 rounded-lg font-medium hover:from-blue-600 hover:to-blue-700 transform hover:scale-[1.02] transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 shadow-md hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              Send Message
+              {isSubmitting ? "Sending..." : "Send Message"}
             </button>
           </form>
         </div>

@@ -4,130 +4,103 @@ import "./style.css";
 import "flowbite";
 import Header from "./components/Header";
 import Heroscection from "./components/Herosection";
-import Productlayout, { Card } from "./components/Productlayout";
+import Productlayout from "./components/Productlayout";
 import Footer from "./components/Footer";
 import Counter from "./components/counter";
 import {
   createBrowserRouter,
-  createRoutesFromElements,
-  Outlet,
-  Route,
   RouterProvider,
+  Outlet
 } from "react-router-dom";
 import Error from "./components/error";
 import Productsdeatails from "./components/productdeatails";
 import Imagecompoent from "./components/imagecomponent";
 import Form from "./components/form";
 import ComponentA from "./components/propsdrilling/componentA";
-import Usedatacontext from "./store/usedatacontext";
+import { UserProvider } from "./store/usedatacontext";
+
+// Lazy load components
 const Comment = lazy(() => import("./components/comment"));
 
-// componet ccomposition
-
+// Main body component
 const Body = () => {
   return (
     <>
-      {/* <Card /> */}
-
-      {/* <Counter /> */}
-      {/* <Header /> */}
       <Heroscection />
       <Productlayout />
-      <Comment />
-      {/* <Footer /> */}
+      <Suspense fallback={<div>Loading comments...</div>}>
+        <Comment />
+      </Suspense>
     </>
   );
 };
 
-// basic route creation
-
-// const router = createBrowserRouter([
-//   {
-//     path: "/",
-//     element: <Body />
-//   },
-//   {
-//     path: "/productlayout",
-//     element: <Productlayout />,
-//   },
-//   {
-//     path: "/counter",
-//     element: <Counter />,
-//   }
-// ]);
-
-// const root = ReactDOM.createRoot(document.getElementById("root"));
-// root.render(
-//   <RouterProvider router={router} />
-// );
-
-// with out router to run directory
-// root.render(Body());
-
+// App layout with context provider
 const Applayout = () => {
   return (
-    <>
-      <Usedatacontext.Provider value={{ name: "sam" }}>
+    <UserProvider>
+      <div className="min-h-screen flex flex-col">
         <Header />
-      </Usedatacontext.Provider>
-
-      <Outlet />
-      <Footer />
-    </>
+        <main className="flex-grow">
+          <Outlet />
+        </main>
+        <Footer />
+      </div>
+    </UserProvider>
   );
 };
 
+// Router configuration
 const router = createBrowserRouter([
   {
     path: "/",
     element: <Applayout />,
+    errorElement: <Error />,
     children: [
       {
-        path: "/",
+        index: true,
         element: <Body />,
       },
       {
-        path: "/counter",
+        path: "counter",
         element: <Counter />,
       },
-
       {
-        path: "/productlayout",
+        path: "productlayout",
         element: <Productlayout />,
       },
-
       {
-        path: "/productlayout/:product_id",
+        path: "productlayout/:product_id",
         element: <Productsdeatails />,
       },
-
       {
-        path: "/imagecomponents",
+        path: "imagecomponents",
         element: <Imagecompoent />,
       },
-
       {
-        path: "/form",
+        path: "form",
         element: <Form />,
       },
-
       {
-        path: "/propsdrilling",
+        path: "propsdrilling",
         element: <ComponentA />,
       },
-
       {
-        path: "/comment",
+        path: "comment",
         element: (
-          <Suspense fallback={"Loading..."}>
+          <Suspense fallback={<div>Loading comments...</div>}>
             <Comment />
           </Suspense>
         ),
       },
     ],
-    errorElement: <Error />,
   },
 ]);
 
+// Render the app
 const root = ReactDOM.createRoot(document.getElementById("root"));
-root.render(<RouterProvider router={router} />);
+root.render(
+  <React.StrictMode>
+    <RouterProvider router={router} />
+  </React.StrictMode>
+);

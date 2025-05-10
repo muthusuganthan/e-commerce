@@ -1,7 +1,26 @@
 import React, { createContext } from "react";
 
-const Usedatacontext = createContext({
-  name: "ram",
-  age: "10",
-});
+const defaultContext = {
+  name: "Guest",
+  age: 0,
+  setUser: () => {},
+};
+
+const Usedatacontext = createContext(defaultContext);
+
+export const UserProvider = ({ children }) => {
+  const [user, setUser] = React.useState(defaultContext);
+
+  const value = {
+    ...user,
+    setUser: (newUser) => setUser({ ...user, ...newUser }),
+  };
+
+  return (
+    <Usedatacontext.Provider value={value}>
+      {children}
+    </Usedatacontext.Provider>
+  );
+};
+
 export default Usedatacontext;
