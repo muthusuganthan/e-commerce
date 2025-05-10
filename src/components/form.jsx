@@ -1,7 +1,7 @@
 import React from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
+import { z } from "zod/dist/index.js";
 
 const schema = z.object({
   name: z.string().min(1, { message: "Required" }),

@@ -6,11 +6,13 @@ export default defineConfig({
   plugins: [react()],
   build: {
     rollupOptions: {
+      external: ['zod'],
       output: {
         manualChunks: {
           'react-vendor': ['react', 'react-dom', 'react-router-dom'],
-        },
-      },
-    },
-  },
+          'form-vendor': ['@hookform/resolvers', 'react-hook-form']
+        }
+      }
+    }
+  }
 })
