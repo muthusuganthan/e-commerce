@@ -17,7 +17,8 @@ import Productsdeatails from "./components/productdeatails";
 import Imagecompoent from "./components/imagecomponent";
 import Form from "./components/form";
 import ComponentA from "./components/propsdrilling/componentA";
-import { UserProvider } from "./store/usedatacontext";
+import { UserProvider } from "./store/cardcontext";
+import Cart from "./components/cart";
 
 // Lazy load components
 const Comment = lazy(() => import("./components/comment"));
@@ -77,6 +78,12 @@ const router = createBrowserRouter([
         path: "imagecomponents",
         element: <Imagecompoent />,
       },
+      {
+        path: "Cart",
+        element: <Cart />,
+      },
+      
+      
       {
         path: "form",
         element: <Form />,

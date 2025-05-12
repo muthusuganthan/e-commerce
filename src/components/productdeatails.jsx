@@ -3,16 +3,30 @@ import { useParams } from "react-router-dom";
 import { useEffect } from "react";
 import { ShimmerSimpleGallery } from 'react-shimmer-effects';
 import Useproductdatadeatails from "../hooks/useproductdatadeatails";
+import Usecart from "../hooks/usecart";
+import Toast from "./Toast";
 
 const Productsdeatails = () => {
     const { product_id } = useParams();
     const [selectedImage, setSelectedImage] = useState(0);
-    const {data,loading}  = Useproductdatadeatails(product_id)  
+    const {data, loading} = Useproductdatadeatails(product_id);
+    const { addToCart } = Usecart();
+    const [showToast, setShowToast] = useState(false);
+    const [quantity, setQuantity] = useState(1);
 
+    const handleAddToCart = () => {
+        if (data) {
+            addToCart({ ...data, quantity });
+            setShowToast(true);
+        }
+    };
 
+    const handleQuantityChange = (newQuantity) => {
+        if (newQuantity >= 1 && newQuantity <= data?.stock) {
+            setQuantity(newQuantity);
+        }
+    };
 
-
-    
     if (loading) {
         return <ShimmerSimpleGallery card imageHeight={300} />;
     }
@@ -144,13 +158,36 @@ const Productsdeatails = () => {
                         </div>
 
                         <div className="mt-6 sm:gap-4 sm:items-center sm:flex sm:mt-8">
-                            <button className="flex items-center justify-center py-2.5 px-5 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-primary-700 focus:z-10 focus:ring-4 focus:ring-gray-100 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700">
-                                <svg className="w-5 h-5 -ms-2 me-2" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width={24} height={24} fill="none" viewBox="0 0 24 24">
-                                    <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12.01 6.001C6.5 1 1 8 5.782 13.001L12.011 20l6.23-7C23 8 17.5 1 12.01 6.002Z" />
-                                </svg>
-                                Add to favorites
-                            </button>
-                            <button className="text-white mt-4 sm:mt-0 bg-primary-700 hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 dark:bg-primary-600 dark:hover:bg-primary-700 focus:outline-none dark:focus:ring-primary-800 flex items-center justify-center">
+                            <div className="flex items-center space-x-4 mb-4 sm:mb-0">
+                                <button
+                                    onClick={() => handleQuantityChange(quantity - 1)}
+                                    className="inline-flex items-center justify-center p-2 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-lg hover:bg-gray-100 hover:text-gray-700 focus:outline-none focus:ring-2 focus:ring-primary-300 dark:bg-gray-800 dark:border-gray-600 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
+                                >
+                                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M20 12H4" />
+                                    </svg>
+                                </button>
+                                <input
+                                    type="number"
+                                    min="1"
+                                    max={data.stock}
+                                    value={quantity}
+                                    onChange={(e) => handleQuantityChange(parseInt(e.target.value) || 1)}
+                                    className="w-16 text-center text-gray-900 bg-white border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-300 dark:bg-gray-800 dark:border-gray-600 dark:text-white"
+                                />
+                                <button
+                                    onClick={() => handleQuantityChange(quantity + 1)}
+                                    className="inline-flex items-center justify-center p-2 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-lg hover:bg-gray-100 hover:text-gray-700 focus:outline-none focus:ring-2 focus:ring-primary-300 dark:bg-gray-800 dark:border-gray-600 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
+                                >
+                                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4v16m8-8H4" />
+                                    </svg>
+                                </button>
+                            </div>
+                            <button 
+                                onClick={handleAddToCart}
+                                className="flex-1 text-white bg-primary-700 hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 dark:bg-primary-600 dark:hover:bg-primary-700 focus:outline-none dark:focus:ring-primary-800 flex items-center justify-center"
+                            >
                                 <svg className="w-5 h-5 -ms-2 me-2" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width={24} height={24} fill="none" viewBox="0 0 24 24">
                                     <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4h1.5L8 16m0 0h8m-8 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4Zm8 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4Zm.75-3H7.5M11 7H6.312M17 4v6m-3-3h6" />
                                 </svg>
@@ -176,6 +213,13 @@ const Productsdeatails = () => {
                     </div>
                 </div>
             </div>
+            {showToast && (
+                <Toast 
+                    message="Product added to cart successfully!" 
+                    type="success" 
+                    onClose={() => setShowToast(false)} 
+                />
+            )}
         </section>
     );
 };
